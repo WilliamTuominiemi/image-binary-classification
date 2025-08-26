@@ -41,11 +41,26 @@ def backward_pass(X, y_true, y_pred, hidden_activation, W1, b1, W2, b2):
     dW2 = [output_error * h for h in hidden_activation]
     db2 = output_error * 1
 
-    hidden_error = [output_error * W2[0][i] * h* (1-h) for i, h in enumerate(hidden_activation)]
+    hidden_error = [output_error * W2[0][i] * h* (1 - h) for i, h in enumerate(hidden_activation)]
     dW1 = [[hidden_error[i] * x for x in X] for i in range(len(hidden_error))]
     db1 = hidden_error
 
     return dW1, db1, dW2, db2    
+
+def update_weights(W1, b1, W2, b2, dW1, db1, dW2, db2, learning_rate):
+    for i in range(len(W1)):
+        for j in range(len(W1[i])):
+            W1[i][j] -= learning_rate * dW1[i][j]
+
+    for i in range(len(b1)):
+        b1[i] -= learning_rate * db1[i]
+
+    for i in range(len(W2[0])):
+        W2[0][i] -= learning_rate * dW2[i]
+
+    b2[0] -= learning_rate * db2
+
+    return W1, b1, W2, b2
 
 two_by_two_vectors = [
     [0, 0, 0, 0],
@@ -72,4 +87,5 @@ majority = [
 
 W1, b1, W2, b2 = initialize_weights(4, 2, 1)
 y_pred, hidden_activation = forward_pass(two_by_two_vectors[0], W1, b1, W2, b2)
-backward_pass(two_by_two_vectors[0], majority[0], y_pred, hidden_activation, W1, b1, W2, b2)
+dW1, db1, dW2, db2 = backward_pass(two_by_two_vectors[0], majority[0], y_pred, hidden_activation, W1, b1, W2, b2)
+W1, b1, W2, b2 = update_weights(W1, b1, W2, b2, dW1, db1, dW2, db2, 0.25)
