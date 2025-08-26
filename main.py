@@ -33,6 +33,20 @@ def forward_pass(X, W1, b1, W2, b2):
 
     return y_pred, hidden_activation
 
+def compute_loss(y_true, y_pred):
+    return (1 / 2) * math.pow((y_true - y_pred), 2)
+
+def backward_pass(X, y_true, y_pred, hidden_activation, W1, b1, W2, b2):
+    output_error = (y_pred - y_true) * y_pred * (1 - y_pred)
+    dW2 = [output_error * h for h in hidden_activation]
+    db2 = output_error * 1
+
+    hidden_error = [output_error * W2[0][i] * h* (1-h) for i, h in enumerate(hidden_activation)]
+    dW1 = [[hidden_error[i] * x for x in X] for i in range(len(hidden_error))]
+    db1 = hidden_error
+
+    return dW1, db1, dW2, db2    
+
 two_by_two_vectors = [
     [0, 0, 0, 0],
     [0, 0, 0, 1],
@@ -57,4 +71,5 @@ majority = [
 ]
 
 W1, b1, W2, b2 = initialize_weights(4, 2, 1)
-forward_pass(two_by_two_vectors[0], W1, b1, W2, b2)
+y_pred, hidden_activation = forward_pass(two_by_two_vectors[0], W1, b1, W2, b2)
+backward_pass(two_by_two_vectors[0], majority[0], y_pred, hidden_activation, W1, b1, W2, b2)
