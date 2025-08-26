@@ -77,6 +77,12 @@ def train(X, Y, epochs, learning_rate):
 
     return W1, b1, W2, b2
 
+def predict(X_sample, y_true, W1, b1, W2, b2):
+    for X_sample, y_true in zip(X_sample, y_true):
+        y_pred, _ = forward_pass(X_sample, W1, b1, W2, b2)
+        predicted_label = 1 if y_pred >= 0.5 else 0
+        print("Predicted:", predicted_label, "| True:", y_true)
+
 two_by_two_vectors = [
     [0, 0, 0, 0],
     [0, 0, 0, 1],
@@ -100,4 +106,16 @@ majority = [
     0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1
 ]
 
-train(two_by_two_vectors, majority, 1000, 0.2)
+W1, b1, W2, b2 = train(two_by_two_vectors, majority, 1000, 0.2)
+
+X_sample = [
+    [0, 0, 1, 1],
+    [1, 0, 1, 0],
+    [1, 0, 1, 1],
+    [0, 0, 0, 1],
+    [1, 1, 1, 0],
+    [1, 0, 0, 1]
+]
+y_true = [0, 0, 1, 0, 1, 0]
+
+predict(X_sample, y_true, W1, b1, W2, b2)
