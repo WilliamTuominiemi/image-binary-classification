@@ -62,6 +62,21 @@ def update_weights(W1, b1, W2, b2, dW1, db1, dW2, db2, learning_rate):
 
     return W1, b1, W2, b2
 
+def train(X, Y, epochs, learning_rate):
+    W1, b1, W2, b2 = initialize_weights(4, 2, 1)
+
+    for epoch in range(epochs):
+        for x, y in zip(X, Y):
+            y_pred, hidden_activation = forward_pass(x, W1, b1, W2, b2)
+            dW1, db1, dW2, db2 = backward_pass(x, y, y_pred, hidden_activation, W1, b1, W2, b2)
+            W1, b1, W2, b2 = update_weights(W1, b1, W2, b2, dW1, db1, dW2, db2, learning_rate)
+        if epoch % 100 == 0:
+            y_pred_epoch, _ = forward_pass(x, W1, b1, W2, b2)
+            loss = (y_pred_epoch - y)**2 / 2
+            print(f"Epoch {epoch}, Loss {loss}")
+
+    return W1, b1, W2, b2
+
 two_by_two_vectors = [
     [0, 0, 0, 0],
     [0, 0, 0, 1],
@@ -85,7 +100,4 @@ majority = [
     0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1
 ]
 
-W1, b1, W2, b2 = initialize_weights(4, 2, 1)
-y_pred, hidden_activation = forward_pass(two_by_two_vectors[0], W1, b1, W2, b2)
-dW1, db1, dW2, db2 = backward_pass(two_by_two_vectors[0], majority[0], y_pred, hidden_activation, W1, b1, W2, b2)
-W1, b1, W2, b2 = update_weights(W1, b1, W2, b2, dW1, db1, dW2, db2, 0.25)
+train(two_by_two_vectors, majority, 1000, 0.2)
